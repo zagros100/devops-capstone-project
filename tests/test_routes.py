@@ -38,6 +38,7 @@ class TestAccountService(TestCase):
     @classmethod
     def tearDownClass(cls):
         """Runs once before test suite"""
+        db.session.close()
 
     def setUp(self):
         """Runs before each test"""
@@ -151,4 +152,25 @@ class TestAccountService(TestCase):
     def test_list_accounts_not_found(self):
         """It should return a 404 Not Found if no accounts are available"""
         response = self.client.get(BASE_URL, content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_account(self):
+        """It should Update an Existing Account"""
+        account = self._create_accounts(1)[0]
+        print(account)
+        new_data = {"name": "Updated Name", "email": "updated@email.com", "address": "updated address", "phone_number": "updated phone num"}
+        response = self.client.put(
+            f"{BASE_URL}/{account.id}",
+            json=new_data,
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        updated_account = response.get_json()
+        self.assertEqual(updated_account["name"], new_data["name"])
+        self.assertEqual(updated_account["email"], new_data["email"])
+
+    def test_update_account_not_found(self):
+        """It should not Update an Account that is not found"""
+        new_data = {"name": "Updated Name", "email": "updated@email.com"}
+        response = self.client.put(f"{BASE_URL}/0", json=new_data)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
