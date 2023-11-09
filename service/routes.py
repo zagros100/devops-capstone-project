@@ -61,6 +61,7 @@ def create_accounts():
 # LIST ALL ACCOUNTS
 ######################################################################
 
+
 @app.route("/accounts", methods=["GET"])
 def list_accounts():
     """
@@ -73,7 +74,6 @@ def list_accounts():
     if not accounts:
         abort(status.HTTP_404_NOT_FOUND, [])
     return jsonify([account.serialize() for account in accounts]), status.HTTP_200_OK
-
 
 
 ######################################################################
@@ -97,6 +97,7 @@ def get_accounts(account_id):
 # UPDATE AN EXISTING ACCOUNT
 ######################################################################
 
+
 @app.route("/accounts/<int:account_id>", methods=["PUT"])
 def update_account(account_id):
     """
@@ -110,14 +111,13 @@ def update_account(account_id):
         abort(status.HTTP_404_NOT_FOUND, f"Account with id [{account_id}] could not be found.")
 
     data = request.get_json()
-    
+
     # Update the account data with the new data
     account.deserialize(data)
     account.update()
 
     # After successfully updating the account, return it with HTTP 200 OK
     return account.serialize(), status.HTTP_200_OK
-
 
 
 ######################################################################
@@ -140,11 +140,9 @@ def delete_account(account_id):
     return "", status.HTTP_204_NO_CONTENT
 
 
-
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
-
 
 def check_content_type(media_type):
     """Checks that the media type is correct"""
